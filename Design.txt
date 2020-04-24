@@ -1,0 +1,13 @@
+First thing I tried to was running the code, after rewriting it (read through the whole code this way) to a header file in Visual Studio. This resulted in errors, calling for #include <new> and std:: before nothrow.
+
+Then I wrote and run the unit tests, testing: negative value, 0, positive value, positive value larger than unsigned int size and keymash text.
+
+Problems occured on negative values, throwing write access violations on setter and getter.
+
+Cpp's "implicit conversions" mechanism was turning negative values into huge unsigned ints, close to the max value. This was resulting in new[] expression requiring way more memory than my machine has, further resulting in bad_alloc exception (which wasn't thrown because of nothrow).
+
+This makes pointer NULL, but m_nSize stays as it was initialized, with a huge number, which lets it pass the IF checks on getter and setter and result. Adding another another check (if pointer is NULL) fixes the issue.
+
+After testing the question sent in the mail, debugging and reading about copy constructors, I was split on two fixes on the resulting double deletion problem. I chose smart pointers over creating unaccessible copy constructor as private member. Both solutions are in the repository.
+
+Not sure why setter is returning stuff instead of being void. I kept it to keep most of the original code.
