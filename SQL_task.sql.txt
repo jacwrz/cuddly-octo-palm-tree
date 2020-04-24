@@ -1,0 +1,15 @@
+--I.Selects names of all buildings in Poland.
+SELECT Name
+FROM Building
+WHERE CityID IN (SELECT CityID FROM City WHERE CountryID IN (SELECT CountryID FROM Country WHERE NAME = 'Poland'));
+
+--II.Selects countries where a total number of inhabitants (population) in all the cities is greater than 400.
+SELECT Country.NAME FROM Country
+JOIN City ON Country.CountryID=City.CountryID
+WHERE Population > 400;
+
+--III.(*) Selects names of countries that have no buildings at all.
+SELECT Country.NAME FROM Country
+LEFT JOIN City ON Country.CountryID=City.CountryID
+LEFT JOIN Building ON City.CityID=Building.CityID
+WHERE BuildingID is NULL;
