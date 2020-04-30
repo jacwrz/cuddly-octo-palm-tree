@@ -6,7 +6,6 @@ class Array
 private:
 	T *m_pData;
 	unsigned int m_nSize;
-	Array(const Array&); //copy constructor in priv
 
 public:
 	Array(unsigned int nSize) : m_nSize(nSize), m_pData(NULL) //also initializing m_pData
@@ -20,6 +19,49 @@ public:
 				m_nSize = 0;
 			}
 		}
+	}
+
+	Array(const Array& source_array) : m_pData(NULL)
+	{
+		//deep copy constructor for class template
+		//even that Array is a template, it's referred to inside
+		//the class, like in the function signatures
+		//and is treated as the full type Array<T>
+		m_nSize = source_array.m_nSize;
+		if (m_nSize > 0)
+		{
+			try
+			{
+				m_pData = new (std::nothrow) T[m_nSize];
+				copy(source_array);
+			}
+			catch (std::bad_alloc& badAlloc)
+			{
+				m_nSize = 0;
+				std::cerr << "bad_alloc caught in copy constructor, not enough memory: " << badAlloc.what() << std::endl;
+			}
+		}
+	}
+
+	void copy(const Array& source_array)
+	{
+		// Copies size of array and its values
+		// going in reverse for easier stop-point
+		T *p = m_pData + m_nSize;
+		T *q = source_array.m_pData + m_nSize;
+		while (p > m_pData)
+			*--p = *--q;
+	}
+
+	Array& operator=(const Array& source_array)
+	{
+		//Copy assignment operator for class template
+		//size stays as it was, to prevent heap corruption
+		T* p = m_pData + m_nSize;
+		T* q = source_array.m_pData + m_nSize;
+		while (p > m_pData)
+			*--p = *--q;
+		return *this;
 	}
 
 	virtual ~Array()
@@ -48,13 +90,3 @@ public:
 			return T();
 	}
 };
-//at least 4 bugs
-//for at least 2:
-//1. Provide a test case for each bug.
-//2. Propose a fix for each bug.
-//3. Find design problems assuming there are no bugs in Array class implementation.
-//can't aggregate initialize it | lacks aggregate initialization (np. Arr [5] = {1, 2, 3, 4, 5})
-//uninitialized variables
-//delete should be delete[] |fixd
-//what happens if Array<T> b(a)?
-//

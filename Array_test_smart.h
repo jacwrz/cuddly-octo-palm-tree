@@ -8,10 +8,6 @@ private:
 	std::unique_ptr<T[]> m_pData;
 	unsigned int m_nSize;
 
-	//Array(const Array&);
-	//either copy constructor in priv or use of smart pointers
-	//prevents double calling of destructor on same pointer
-
 public:
 	Array(unsigned int nSize) : m_nSize(nSize)
 	{
@@ -48,13 +44,3 @@ public:
 			return T();
 	}
 };
-//at least 4 bugs
-//for at least 2:
-//1. Provide a test case for each bug.
-//2. Propose a fix for each bug.
-//3. Find design problems assuming there are no bugs in Array class implementation.
-//can't aggregate initialize it | lacks aggregate initialization (np. Arr [5] = {1, 2, 3, 4, 5})
-//uninitialized variables
-//delete should be delete[] |fixd
-//what happens if Array<T> b(a)?
-//
